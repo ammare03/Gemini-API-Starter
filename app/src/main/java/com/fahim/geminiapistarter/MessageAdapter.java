@@ -10,7 +10,7 @@ import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    private final List<Message> messages;
+    private List<Message> messages;
 
     public MessageAdapter(List<Message> messages) {
         this.messages = messages;
@@ -19,7 +19,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the layout for each message item
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_message, parent, false);
         return new MessageViewHolder(view);
@@ -28,12 +27,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
-        // Use TextFormatter to format the message content with bold styling
         holder.messageTextView.setText(TextFormatter.getBoldSpannableText(message.getContent()));
-
-        // Optional: Customize appearance based on the message sender.
-        // For example:
-        // holder.itemView.setBackgroundResource(message.isUser() ? R.drawable.user_bg : R.drawable.ai_bg);
     }
 
     @Override
@@ -41,15 +35,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return messages.size();
     }
 
-    // Helper method to add a new message and update the list
+    // Add a message to the list and update the view
     public void addMessage(Message message) {
         messages.add(message);
         notifyItemInserted(messages.size() - 1);
     }
 
+    // Clear all messages from the adapter
+    public void clearMessages() {
+        messages.clear();
+        notifyDataSetChanged();
+    }
+
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageTextView;
-
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             messageTextView = itemView.findViewById(R.id.messageTextView);

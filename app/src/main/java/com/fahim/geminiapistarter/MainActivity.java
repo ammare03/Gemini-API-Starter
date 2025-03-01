@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         messageRecyclerView = findViewById(R.id.messageRecyclerView);
         ImageButton toggleDarkModeButton = findViewById(R.id.toggleDarkModeButton);
+        ImageButton deleteChatButton = findViewById(R.id.deleteChatButton);
 
         // Set up dark mode toggle button to update SharedPreferences
         toggleDarkModeButton.setOnClickListener(v -> {
@@ -77,6 +78,16 @@ public class MainActivity extends AppCompatActivity {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 prefs.edit().putBoolean("nightMode", true).apply();
             }
+        });
+
+        // Set up delete chat button to clear conversation history
+        deleteChatButton.setOnClickListener(v -> {
+            Executors.newSingleThreadExecutor().execute(() -> {
+                db.messageDao().deleteAllMessages();
+                runOnUiThread(() -> {
+                    messageAdapter.clearMessages();
+                });
+            });
         });
 
         // Initialize the message list and adapter
@@ -109,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Create and add the user's message to the conversation, then save it to the database
+            // Create and add the user's message, then save it to the database
             Message userMessage = new Message(prompt, true);
             addMessageToConversation(userMessage);
             saveMessageToDatabase(userMessage);
@@ -131,11 +142,10 @@ public class MainActivity extends AppCompatActivity {
                     if (responseString == null) {
                         responseString = "Error: No response received.";
                     }
-                    Log.d("Response", responseString);
                     String finalResponseString = responseString;
                     runOnUiThread(() -> {
                         progressBar.setVisibility(GONE);
-                        // Create and add the AI response to the conversation, then save it to the database
+                        // Create and add the AI response, then save it to the database
                         Message aiMessage = new Message(finalResponseString, false);
                         addMessageToConversation(aiMessage);
                         saveMessageToDatabase(aiMessage);

@@ -13,4 +13,7 @@ public interface MessageDao {
 
     @Query("SELECT * FROM messages ORDER BY id ASC")
     List<Message> getAllMessages();
+
+    @Query("DELETE FROM messages")
+    void deleteAllMessages();
 }
