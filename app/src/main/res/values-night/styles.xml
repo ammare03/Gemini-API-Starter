@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme overrides -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your dark theme colors if needed -->
+        <item name="colorPrimary">@color/darkColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/darkColorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/darkColorOnPrimary</item>
+        <item name="colorSecondary">@color/darkColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/darkColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/darkColorOnSecondary</item>
+    </style>
+</resources>
