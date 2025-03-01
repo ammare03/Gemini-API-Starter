@@ -2,4 +2,37 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Primary brand color -->
+    <color name="colorPrimary">#6200EE</color>
+    <!-- Primary variant -->
+    <color name="colorPrimaryVariant">#3700B3</color>
+    <!-- Color for text/icons on primary color -->
+    <color name="colorOnPrimary">#FFFFFF</color>
+
+    <!-- Secondary brand color -->
+    <color name="colorSecondary">#03DAC6</color>
+    <!-- Secondary variant -->
+    <color name="colorSecondaryVariant">#018786</color>
+    <!-- Color for text/icons on secondary color -->
+    <color name="colorOnSecondary">#000000</color>
+
+    <!-- Background, surface, and error colors -->
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="error">#B00020</color>
+
+    <!-- Colors for content displayed on background or surface -->
+    <color name="onBackground">#000000</color>
+    <color name="onSurface">#000000</color>
+
+    <!-- Dark theme primary colors -->
+    <color name="darkColorPrimary">#BB86FC</color>
+    <color name="darkColorPrimaryVariant">#3700B3</color>
+    <color name="darkColorOnPrimary">#000000</color>
+
+    <!-- Dark theme secondary colors -->
+    <color name="darkColorSecondary">#03DAC6</color>
+    <color name="darkColorSecondaryVariant">#03DAC6</color>
+    <color name="darkColorOnSecondary">#000000</color>
 </resources>

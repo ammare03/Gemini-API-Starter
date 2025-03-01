@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Gemini API Starter</string>
+    <string name="send">Send</string>
     <string name="enter_your_prompt_here">Enter your prompt here</string>
+    <string name="toggle_dark_mode">Toggle Dark Mode</string>
+    <string name="voice_input">Voice Input</string>
     <string name="lorem_ipsum">
         Lorem ipsum, placeholder or dummy text used in typesetting and graphic design for previewing layouts. It features scrambled Latin text, which emphasizes the design over content of the layout. It is the standard placeholder text of the printing and publishing industries.
 
