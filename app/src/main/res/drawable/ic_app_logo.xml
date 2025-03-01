@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Outer Speech Bubble Shape in Blue -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M8,8 h40 c4.418,0 8,3.582 8,8 v24 c0,4.418 -3.582,8 -8,8 h-12 l-10,10 -10,-10 h-8 c-4.418,0 -8,-3.582 -8,-8 v-24 c0,-4.418 3.582,-8 8,-8 z"/>
+
+    <!-- Inner Bubble Area: Lighter Blue -->
+    <path
+        android:fillColor="#BBDEFB"
+        android:fillAlpha="0.9"
+        android:pathData="M16,16 h32 c2.209,0 4,1.791 4,4 v16 c0,2.209 -1.791,4 -4,4 h-8 l-8,8 -8,-8 h-8 c-2.209,0 -4,-1.791 -4,-4 v-16 c0,-2.209 1.791,-4 4,-4 z"/>
+
+    <!-- AI Spark: A Vibrant Yellow Circle using a path -->
+<!--    <path-->
+<!--        android:fillColor="#FFC107"-->
+<!--        android:pathData="M32,24 a4,4 0 1,0 0,8 a4,4 0 1,0 0,-8"/>-->
+
+    <!-- Representative Conversation Lines in Black -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M22,22 h20"/>
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M22,26 h20"/>
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M22,30 h20"/>
+</vector>

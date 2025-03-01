@@ -7,31 +7,52 @@
     android:layout_height="match_parent"
     android:padding="@dimen/margin_medium">
 
-    <!-- Dark Mode Toggle Button at the top right -->
-    <ImageButton
-        android:id="@+id/toggleDarkModeButton"
-        android:layout_width="wrap_content"
+    <!-- Sticky Header Container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_dark_mode_toggle"
-        android:contentDescription="@string/toggle_dark_mode"
-        android:padding="8dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- RecyclerView for conversation history on the left -->
+        <!-- Logo centered in the header -->
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_app_logo"
+            android:contentDescription="@string/app_logo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Dark Mode Toggle Button aligned to top right within the header -->
+        <ImageButton
+            android:id="@+id/toggleDarkModeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_dark_mode_toggle"
+            android:contentDescription="@string/toggle_dark_mode"
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- RecyclerView for conversation history placed below the header -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messageRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="@dimen/margin_small"
-        app:layout_constraintTop_toBottomOf="@id/toggleDarkModeButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintBottom_toTopOf="@+id/promptInputContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/promptInputContainer"
-        app:layout_constraintHorizontal_weight="1" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Input container on the right, centered vertically -->
+    <!-- Input container fixed at the bottom -->
     <LinearLayout
         android:id="@+id/promptInputContainer"
         android:layout_width="0dp"
@@ -39,13 +60,11 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="@dimen/margin_small"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/messageRecyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Text input layout takes up available horizontal space -->
+        <!-- TextInputLayout taking available horizontal space -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/promptEditTextLayout"
             android:layout_width="0dp"
@@ -60,7 +79,7 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Send button is placed to the right of the text input -->
+        <!-- Send button placed to the right of the text input -->
         <ImageButton
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
