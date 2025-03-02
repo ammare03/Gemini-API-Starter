@@ -25,7 +25,6 @@ public class Message {
     public String getContent() {
         return content;
     }
-
     public boolean isUser() {
         return isUser;
     }

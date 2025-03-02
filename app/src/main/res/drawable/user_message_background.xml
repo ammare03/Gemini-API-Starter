@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Use color resource that adapts to light/dark mode -->
+    <solid android:color="@color/userMessageColor"/>
+
+    <!-- Rounded corners for a modern look -->
+    <corners android:radius="16dp" />
+
+    <!-- (Optional) Subtle stroke for extra detail -->
+    <stroke
+        android:width="1dp"
+        android:color="#30FFFFFF" />
+</shape>
