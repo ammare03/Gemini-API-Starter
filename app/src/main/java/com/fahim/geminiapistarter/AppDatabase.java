@@ -18,7 +18,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "gemini_database")
-                            .fallbackToDestructiveMigration() // Destructive migration for development. Remove or update for production.
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }

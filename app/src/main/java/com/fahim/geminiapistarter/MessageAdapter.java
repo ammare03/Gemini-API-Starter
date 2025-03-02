@@ -35,13 +35,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return messages.size();
     }
 
-    // Add a message to the list and update the view
     public void addMessage(Message message) {
         messages.add(message);
         notifyItemInserted(messages.size() - 1);
     }
 
-    // Clear all messages from the adapter
     public void clearMessages() {
         messages.clear();
         notifyDataSetChanged();

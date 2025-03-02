@@ -3,15 +3,17 @@ package com.fahim.geminiapistarter;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.speech.RecognizerIntent;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
@@ -25,6 +27,7 @@ import com.google.ai.client.generativeai.type.GenerateContentResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 
 import kotlin.coroutines.Continuation;
@@ -33,17 +36,18 @@ import kotlin.coroutines.EmptyCoroutineContext;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_VOICE_INPUT = 101;
+
     private EditText promptEditText;
     private ProgressBar progressBar;
     private RecyclerView messageRecyclerView;
     private MessageAdapter messageAdapter;
     private GenerativeModel generativeModel;
-    private SharedPreferences prefs;
     private AppDatabase db;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Load dark mode preference from SharedPreferences
         prefs = getSharedPreferences("GeminiPrefs", MODE_PRIVATE);
         boolean isNightMode = prefs.getBoolean("nightMode", false);
         AppCompatDelegate.setDefaultNightMode(
@@ -53,22 +57,37 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Set up edge-to-edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Initialize views
         promptEditText = findViewById(R.id.promptEditText);
         ImageButton submitPromptButton = findViewById(R.id.sendButton);
-        progressBar = findViewById(R.id.progressBar);
-        messageRecyclerView = findViewById(R.id.messageRecyclerView);
+        ImageButton voiceButton = findViewById(R.id.voiceButton);
         ImageButton toggleDarkModeButton = findViewById(R.id.toggleDarkModeButton);
         ImageButton deleteChatButton = findViewById(R.id.deleteChatButton);
+        progressBar = findViewById(R.id.progressBar);
+        messageRecyclerView = findViewById(R.id.messageRecyclerView);
 
-        // Set up dark mode toggle button to update SharedPreferences
+        db = AppDatabase.getDatabase(getApplicationContext());
+
+        List<Message> messageList = new ArrayList<>();
+        messageAdapter = new MessageAdapter(messageList);
+        messageRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        messageRecyclerView.setAdapter(messageAdapter);
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Message> storedMessages = db.messageDao().getAllMessages();
+            if (storedMessages != null && !storedMessages.isEmpty()) {
+                messageList.addAll(storedMessages);
+                runOnUiThread(() -> messageAdapter.notifyDataSetChanged());
+            }
+        });
+
+        generativeModel = new GenerativeModel("gemini-2.0-flash", BuildConfig.API_KEY);
+
         toggleDarkModeButton.setOnClickListener(v -> {
             int currentMode = AppCompatDelegate.getDefaultNightMode();
             if (currentMode == AppCompatDelegate.MODE_NIGHT_YES) {
@@ -80,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Set up delete chat button to clear conversation history
         deleteChatButton.setOnClickListener(v -> {
             Executors.newSingleThreadExecutor().execute(() -> {
                 db.messageDao().deleteAllMessages();
@@ -90,26 +108,13 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
-        // Initialize the message list and adapter
-        List<Message> messageList = new ArrayList<>();
-        messageAdapter = new MessageAdapter(messageList);
-        messageRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        messageRecyclerView.setAdapter(messageAdapter);
-
-        // Initialize the Room Database instance
-        db = AppDatabase.getDatabase(getApplicationContext());
-
-        // Load past conversation history from the database on a background thread
-        Executors.newSingleThreadExecutor().execute(() -> {
-            List<Message> storedMessages = db.messageDao().getAllMessages();
-            if (storedMessages != null && !storedMessages.isEmpty()) {
-                messageList.addAll(storedMessages);
-                runOnUiThread(() -> messageAdapter.notifyDataSetChanged());
-            }
+        voiceButton.setOnClickListener(v -> {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak your prompt...");
+            startActivityForResult(intent, REQUEST_VOICE_INPUT);
         });
-
-        // Initialize GenerativeModel with your API key
-        generativeModel = new GenerativeModel("gemini-2.0-flash", BuildConfig.API_KEY);
 
         submitPromptButton.setOnClickListener(v -> {
             String prompt = promptEditText.getText().toString().trim();
@@ -119,15 +124,13 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Create and add the user's message, then clear the input field
             Message userMessage = new Message(prompt, true);
             addMessageToConversation(userMessage);
             saveMessageToDatabase(userMessage);
-            promptEditText.setText("");  // Clear the input field after sending
+            promptEditText.setText("");
 
             progressBar.setVisibility(VISIBLE);
 
-            // Generate AI response
             generativeModel.generateContent(prompt, new Continuation<>() {
                 @NonNull
                 @Override
@@ -145,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                     String finalResponseString = responseString;
                     runOnUiThread(() -> {
                         progressBar.setVisibility(GONE);
-                        // Create and add the AI response, then save it to the database
+                        // Create and add AI message
                         Message aiMessage = new Message(finalResponseString, false);
                         addMessageToConversation(aiMessage);
                         saveMessageToDatabase(aiMessage);
@@ -155,13 +158,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-        // Helper method to add a message to the conversation view and scroll to the latest message
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_VOICE_INPUT && resultCode == RESULT_OK && data != null) {
+            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (results != null && !results.isEmpty()) {
+                promptEditText.setText(results.get(0));
+            }
+        }
+    }
+
     private void addMessageToConversation(Message message) {
         messageAdapter.addMessage(message);
         messageRecyclerView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
     }
 
-    // Helper method to save a message to the Room database on a background thread
     private void saveMessageToDatabase(Message message) {
         Executors.newSingleThreadExecutor().execute(() -> db.messageDao().insertMessage(message));
     }
