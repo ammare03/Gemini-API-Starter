@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         // Initialize GenerativeModel with your API key
         generativeModel = new GenerativeModel("gemini-2.0-flash", BuildConfig.API_KEY);
 
-        // Handle send button click
         submitPromptButton.setOnClickListener(v -> {
             String prompt = promptEditText.getText().toString().trim();
             promptEditText.setError(null);
@@ -120,10 +119,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Create and add the user's message, then save it to the database
+            // Create and add the user's message, then clear the input field
             Message userMessage = new Message(prompt, true);
             addMessageToConversation(userMessage);
             saveMessageToDatabase(userMessage);
+            promptEditText.setText("");  // Clear the input field after sending
 
             progressBar.setVisibility(VISIBLE);
 
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Helper method to add a message to the conversation view and scroll to the latest message
+        // Helper method to add a message to the conversation view and scroll to the latest message
     private void addMessageToConversation(Message message) {
         messageAdapter.addMessage(message);
         messageRecyclerView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
